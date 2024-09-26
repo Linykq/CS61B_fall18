@@ -13,7 +13,7 @@ public class ArrayDeque<T> {
         nextLast = 1;
     }
 
-    public void resizeExpand() {
+    private void resizeExpand() {
         if(size < len) {
             return;
         }
@@ -63,7 +63,7 @@ public class ArrayDeque<T> {
         }
     }
 
-    public void resizeReduce(){
+    private void resizeReduce(){
         if(len < 16 || size * 4 >= len) {
             return;
         }

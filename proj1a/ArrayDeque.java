@@ -57,7 +57,7 @@ public class ArrayDeque<T> {
     }
 
     public void printDeque() {
-        if ((nextFirst + 1) % len < (nextLast - 1) % len) {
+        if ((nextFirst + 1) % len < (nextLast - 1 + len) % len) {
             for (int i = (nextFirst + 1) % len; i < nextLast; i++) {
                 System.out.print(items[i] + " ");
             }
@@ -74,7 +74,7 @@ public class ArrayDeque<T> {
 
     private void resizeReduce() {
         T[] reduce = (T[]) new Object[len / 2];
-        if ((nextFirst + 1) % len < (nextLast - 1) % len) {
+        if ((nextFirst + 1) % len < (nextLast - 1 + len) % len) {
             System.arraycopy(items, (nextFirst + 1) % len, reduce, 0, size);
         } else {
             System.arraycopy(items, (nextFirst + 1) % len, reduce, 0, len - nextFirst - 1);

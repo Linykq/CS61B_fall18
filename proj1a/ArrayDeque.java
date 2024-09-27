@@ -14,12 +14,9 @@ public class ArrayDeque<T> {
     }
 
     private void resizeExpand() {
-        if(size < len) {
-            return;
-        }
-        T[] expand = (T[]) new Object[items.length];
-        System.arraycopy(items, (nextFirst + 1) % len, expand, 0 , len - nextFirst - 1);
-        System.arraycopy(items, 0, expand, len - nextFirst - 1 , nextFirst + 1);
+        T[] expand = (T[]) new Object[len * 2];
+        System.arraycopy(items, (nextFirst + 1) % len, expand, 0, len - nextFirst - 1);
+        System.arraycopy(items, 0, expand, len - nextFirst - 1, nextFirst + 1);
         items = expand;
         nextLast = len;
         len *= 2;
@@ -27,20 +24,24 @@ public class ArrayDeque<T> {
     }
 
     public void addFirst(T item) {
-        resizeExpand();
+        if (size == len) {
+            resizeExpand();
+        }
         items[nextFirst] = item;
         nextFirst -= 1;
-        if(nextFirst < 0) {
+        if (nextFirst < 0) {
             nextFirst += len;
         }
         size += 1;
     }
 
     public void addLast(T item) {
-        resizeExpand();
+        if (size == len) {
+            resizeExpand();
+        }
         items[nextLast] = item;
         nextLast += 1;
-        if(nextLast > len-1) {
+        if (nextLast > len  - 1) {
             nextLast -= len;
         }
         size += 1;
@@ -55,57 +56,76 @@ public class ArrayDeque<T> {
     }
 
     public void printDeque() {
-        for(int i = nextFirst + 1 ; i < len; i++) {
-            System.out.print(items[i] + " ");
+        if ((nextFirst + 1) % len< (nextLast - 1) % len) {
+            for (int i = (nextFirst + 1) % len; i < nextLast; i++) {
+                System.out.print(items[i] + " ");
+            }
+        } else {
+            for (int i = (nextFirst + 1) % len; i < len; i++) {
+                System.out.print(items[i] + " ");
+            }
+            for (int i = 0; i < nextLast; i++) {
+                System.out.print(items[i] + " ");
+            }
         }
-        for(int i = 0 ; i < nextFirst + 1; i++) {
-            System.out.print(items[i] + " ");
-        }
+        System.out.println();
     }
 
-    private void resizeReduce(){
-        if(len < 16 || size * 4 >= len) {
-            return;
-        }
-        T[] reduce = (T[]) new Object[items.length / 2];
-        if (nextFirst < nextLast) {
-            System.arraycopy(items, nextFirst + 1, reduce, 0 , size);
-        }
-        else {
-            System.arraycopy(items, (nextFirst + 1) % len, reduce, 0 , len - nextFirst - 1);
-            System.arraycopy(items, 0, reduce, len - nextFirst - 1 , nextLast - 1);
+    private void resizeReduce() {
+        T[] reduce = (T[]) new Object[len / 2];
+        if ((nextFirst + 1) % len< (nextLast - 1) % len) {
+            System.arraycopy(items, (nextFirst + 1) %len, reduce, 0, size);
+        } else {
+            System.arraycopy(items, (nextFirst + 1) % len, reduce, 0, len - nextFirst - 1);
+            System.arraycopy(items, 0, reduce, len - nextFirst - 1, nextLast - 1);
         }
         items = reduce;
         nextLast = size;
         len = len / 2;
         nextFirst = len - 1;
-        resizeReduce();
+        if (len >= 16 && len > 4 * size) {
+            resizeReduce();
+        }
     }
 
     public T removeFirst() {
-        T remove = items [(nextFirst + 1) % len];
+        if (size == 0) {
+            return null;
+        }
+        T remove = items[(nextFirst + 1) % len];
+        items[(nextFirst + 1) % len] = null;
         nextFirst += 1;
-        if(nextFirst > len - 1) {
+        if (nextFirst > len - 1) {
             nextFirst -= len;
         }
         size -= 1;
-        resizeReduce();
+        if (len >= 16 && len > 4 * size) {
+            resizeReduce();
+        }
         return remove;
     }
 
     public T removeLast() {
-        resizeReduce();
-        T remove = items [(nextLast -1 + len) % len];
+        if (size == 0) {
+            return null;
+        }
+        T remove = items[(nextLast - 1 + len) % len];
+        items[(nextLast - 1 + len) % len] = null;
         nextLast -= 1;
-        if(nextLast < 0) {
+        if (nextLast < 0) {
             nextLast += len;
         }
         size -= 1;
-        resizeReduce();
+        if (len >= 16 && len > 4 * size) {
+            resizeReduce();
+        }
         return remove;
     }
 
-    public T get(int index){
+    public T get(int index) {
+        if (index >= size){
+            return null;
+        }
         return items[(nextFirst + index + 1) % len];
     }
 

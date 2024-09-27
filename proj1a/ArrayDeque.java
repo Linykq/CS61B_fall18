@@ -4,6 +4,7 @@ public class ArrayDeque<T> {
     private int nextFirst;
     private int nextLast;
     private int len;
+    private static int limit = 16;
 
     public ArrayDeque() {
         items = (T[]) new Object[8];
@@ -56,7 +57,7 @@ public class ArrayDeque<T> {
     }
 
     public void printDeque() {
-        if ((nextFirst + 1) % len< (nextLast - 1) % len) {
+        if ((nextFirst + 1) % len < (nextLast - 1) % len) {
             for (int i = (nextFirst + 1) % len; i < nextLast; i++) {
                 System.out.print(items[i] + " ");
             }
@@ -73,8 +74,8 @@ public class ArrayDeque<T> {
 
     private void resizeReduce() {
         T[] reduce = (T[]) new Object[len / 2];
-        if ((nextFirst + 1) % len< (nextLast - 1) % len) {
-            System.arraycopy(items, (nextFirst + 1) %len, reduce, 0, size);
+        if ((nextFirst + 1) % len < (nextLast - 1) % len) {
+            System.arraycopy(items, (nextFirst + 1) % len, reduce, 0, size);
         } else {
             System.arraycopy(items, (nextFirst + 1) % len, reduce, 0, len - nextFirst - 1);
             System.arraycopy(items, 0, reduce, len - nextFirst - 1, nextLast - 1);
@@ -83,7 +84,7 @@ public class ArrayDeque<T> {
         nextLast = size;
         len = len / 2;
         nextFirst = len - 1;
-        if (len >= 16 && len > 4 * size) {
+        if (len >= limit && len > 4 * size) {
             resizeReduce();
         }
     }
@@ -99,7 +100,7 @@ public class ArrayDeque<T> {
             nextFirst -= len;
         }
         size -= 1;
-        if (len >= 16 && len > 4 * size) {
+        if (len >= limit && len > 4 * size) {
             resizeReduce();
         }
         return remove;
@@ -116,14 +117,14 @@ public class ArrayDeque<T> {
             nextLast += len;
         }
         size -= 1;
-        if (len >= 16 && len > 4 * size) {
+        if (len >= limit && len > 4 * size) {
             resizeReduce();
         }
         return remove;
     }
 
     public T get(int index) {
-        if (index >= size){
+        if (index >= size) {
             return null;
         }
         return items[(nextFirst + index + 1) % len];

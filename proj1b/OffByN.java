@@ -1,7 +1,7 @@
-public class OffByN implements CharacterComparator{
+public class OffByN implements CharacterComparator {
     private int gap;
 
-    OffByN(int N) {
+    public OffByN(int N) {
         this.gap = N;
     }
 
